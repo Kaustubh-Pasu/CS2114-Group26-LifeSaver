@@ -39,6 +39,8 @@ public class WaitlistDeque<T> extends Recipient
         }
         DLNode<T> newEntry = new DLNode<T> (r);
         tail.setNextNode(newEntry);
+        newEntry.setPreviousNode(tail);
+        tail = newEntry;
         size++;
         
     }
@@ -54,6 +56,7 @@ public class WaitlistDeque<T> extends Recipient
         }
         Recipient r = head.getData();
         head = head.getNextNode();
+        head.setPreviousNode(null);
         size--;
     }
     
@@ -92,8 +95,17 @@ public class WaitlistDeque<T> extends Recipient
      * Supposed to remove a specific node with ID, incomplete. Need ID
      * @param n
      */
-    public void remove(Recipient r) {
-        int id = r.getId;
+    public void remove(DLNode<T> n) {
+        if (n == null) {
+            throw new IllegalArgumentException();
+        }
+        
+        DLNode<T> newNext = n.getNextNode();
+        DLNode<T> prev = n.getPreviousNode();
+        
+        prev.setNextNode(newNext);
+        newNext.setPreviousNode(prev);
+        size--;
     }
     
     // ----------------------------------------------------------
