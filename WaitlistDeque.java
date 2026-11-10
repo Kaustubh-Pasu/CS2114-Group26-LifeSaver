@@ -1,18 +1,28 @@
-package Project3;
+package project3;
 
 import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class WaitlistDeque<T> extends Recipient
+// -------------------------------------------------------------------------
+/**
+ * Store each recipient as its value. Doubly linked queue that represents the
+ * waitlist itself.
+ * 
+ * @author Andrew Kim
+ * @version Nov 10, 2026
+ */
+public class WaitlistDeque
 {
-    //~ Fields ................................................................
+    // ~ Fields ................................................................
     /**
      * References node at front of deque
      */
-    protected DLNode<T> head;
+    protected DLNode<Recipient> head;
     /**
      * References node at back of deque
      */
-    protected DLNode<T> tail;
+    protected DLNode<Recipient> tail;
     /**
      * number of elements in the deque
      */
@@ -27,125 +37,155 @@ public class WaitlistDeque<T> extends Recipient
         tail = null;
         size = 0;
     }
+
+
     // ----------------------------------------------------------
     /**
      * Adds new recipient to end of list
-     * @param r recipient class
+     * 
+     * @param r
+     *            recipient class
      */
-    //~Public  Methods ........................................................
-    public void enqueue(Recipient r) {
-        if (r == null) {
+    // ~Public Methods ........................................................
+    public void enqueue(Recipient r)
+    {
+        if (r == null)
+        {
             throw new IllegalArgumentException();
         }
-        DLNode<T> newEntry = new DLNode<T> (r);
+        DLNode<Recipient> newEntry = new DLNode<Recipient>(r);
         tail.setNextNode(newEntry);
         newEntry.setPreviousNode(tail);
         tail = newEntry;
         size++;
-        
+
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * Removes and returns the recipient at front
+     * 
      * @return recipient at front
      */
-    public Recipient dequeue() {
-        if (isEmpty()) {
+    public Recipient dequeue()
+    {
+        if (isEmpty())
+        {
             throw new NoSuchElementException();
         }
         Recipient r = head.getData();
         head = head.getNextNode();
         head.setPreviousNode(null);
         size--;
+        return r;
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * Returns recipient at front, does not remove them
+     * 
      * @return recipient at front
      */
-    public Recipient peek() {
-        if (isEmpty()) {
+    public Recipient peek()
+    {
+        if (isEmpty())
+        {
             throw new NoSuchElementException();
         }
         return head.getData();
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * returns true if no one is waiting
+     * 
      * @return true or false
      */
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return size() == 0;
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * Size of the deque
+     * 
      * @return size
      */
-    public int size() {
+    public int size()
+    {
         return this.size;
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * Supposed to remove a specific node with ID, incomplete. Need ID
+     * 
      * @param n
      */
-    public void remove(DLNode<T> n) {
-        if (n == null) {
+    public void remove(DLNode<Recipient> n)
+    {
+        if (n == null)
+        {
             throw new IllegalArgumentException();
         }
-        
-        DLNode<T> newNext = n.getNextNode();
-        DLNode<T> prev = n.getPreviousNode();
-        
+
+        DLNode<Recipient> newNext = n.getNextNode();
+        DLNode<Recipient> prev = n.getPreviousNode();
+
         prev.setNextNode(newNext);
         newNext.setPreviousNode(prev);
         size--;
     }
-    
+
+
     // ----------------------------------------------------------
     /**
      * @return array with all recipients
      */
-    public Recipient[] get_all_recipients() {
+    public Recipient[] get_all_recipients()
+    {
         int l = size();
-        DLNode<T> p = head;
-        Recipient[] all = new Recipient[l];
-        for (int i = 0; i < l; i++) {
-            all.add(p);
+        DLNode<Recipient> p = head;
+        Recipient[] allRecipients = new Recipient[l];
+        for (int i = 0; i < l; i++)
+        {
+            Recipient current = p.getData();
+            allRecipients[i] = current;
             p = p.getNextNode();
         }
-        return all;
+        return allRecipients;
     }
-    
+
     // -------------------------------------------------------------------------
     /**
-     *  Class for DLNode and its methods
-     *  @param <T>
+     * Class for DLNode and its methods
      * 
-     *  @author Andrew Kim
-     *  @version Nov 10, 2026
+     * @param <Recipient>
+     * @author Andrew Kim
+     * @version Nov 10, 2026
      */
-    protected static final class DLNode<T>
+    @SuppressWarnings("hiding")
+    protected static final class DLNode<Recipient>
     {
 
         /**
          * Deque entry
          */
-        private T data;
+        private Recipient data;
         /**
          * Link to next node
          */
-        private DLNode<T> next;
+        private DLNode<Recipient> next;
         /**
          * Link to previous node
          */
-        private DLNode<T> previous;
+        private DLNode<Recipient> previous;
 
         /**
          * Constructor
@@ -153,7 +193,7 @@ public class WaitlistDeque<T> extends Recipient
          * @param dataPortion
          *            the data to be stored in the node
          */
-        protected DLNode(T dataPortion)
+        protected DLNode(Recipient dataPortion)
         {
             data = dataPortion;
             next = null;
@@ -172,9 +212,9 @@ public class WaitlistDeque<T> extends Recipient
          *            the reference to the next node
          */
         protected DLNode(
-            DLNode<T> previousNode,
-            T dataPortion,
-            DLNode<T> nextNode)
+            DLNode<Recipient> previousNode,
+            Recipient dataPortion,
+            DLNode<Recipient> nextNode)
         {
             // data = dataPortion;
             this(dataPortion);
@@ -188,7 +228,7 @@ public class WaitlistDeque<T> extends Recipient
          * 
          * @return data portion
          */
-        protected T getData()
+        protected Recipient getData()
         {
             return data;
         }
@@ -200,7 +240,7 @@ public class WaitlistDeque<T> extends Recipient
          * @param newData
          *            data to store in the node
          */
-        protected void setData(T newData)
+        protected void setData(Recipient newData)
         {
             data = newData;
         }
@@ -211,7 +251,7 @@ public class WaitlistDeque<T> extends Recipient
          * 
          * @return reference to the next node
          */
-        protected DLNode<T> getNextNode()
+        protected DLNode<Recipient> getNextNode()
         {
             return next;
         }
@@ -223,7 +263,7 @@ public class WaitlistDeque<T> extends Recipient
          * @param nextNode
          *            reference to next node
          */
-        protected void setNextNode(DLNode<T> nextNode)
+        protected void setNextNode(DLNode<Recipient> nextNode)
         {
             next = nextNode;
         }
@@ -234,7 +274,7 @@ public class WaitlistDeque<T> extends Recipient
          * 
          * @return reference to the previous node
          */
-        protected DLNode<T> getPreviousNode()
+        protected DLNode<Recipient> getPreviousNode()
         {
             return previous;
         }
@@ -246,7 +286,7 @@ public class WaitlistDeque<T> extends Recipient
          * @param previousNode
          *            reference to previous node
          */
-        protected void setPreviousNode(DLNode<T> previousNode)
+        protected void setPreviousNode(DLNode<Recipient> previousNode)
         {
             previous = previousNode;
         }
