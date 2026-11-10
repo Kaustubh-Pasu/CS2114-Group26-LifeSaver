@@ -85,6 +85,11 @@ public class Recipient {
     }
 
 
+    public String getBloodType() {
+        return this.bloodType;
+    }
+
+
     public LocalDateTime getRegistrationDate() {
         return this.registrationDate;
     }
