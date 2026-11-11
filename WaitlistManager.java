@@ -18,7 +18,7 @@ public class WaitlistManager {
         "lung", "pancreas", "intestine" };
 
     private HashMap<String, WaitlistDeque> waitlists;
-    private HashMap<Integer, Node> lookup;
+    private HashMap<Integer, WaitlistDeque.DLNode<Recipient>> lookup;
 
     // ----------------------------------------------------------
     /**
@@ -87,7 +87,7 @@ public class WaitlistManager {
      * @return true if the recipient was found and removed, false otherwise
      */
     public boolean removeRecipient(int id) {
-        Node node = lookup.remove(id);
+        WaitlistDeque.DLNode<Recipient> node = lookup.remove(id);
         if (node == null) {
             return false;
         }
@@ -119,7 +119,7 @@ public class WaitlistManager {
         for (Recipient candidate : deque.getAllRecipients()) {
             String recipientGroup = aboGroup(candidate.getBloodType());
             if (isCompatible(donorGroup, recipientGroup)) {
-                Node node = lookup.remove(candidate.getId());
+                WaitlistDeque.DLNode<Recipient> node = lookup.remove(candidate.getId());
                 deque.remove(node);
                 candidate.setStatus("matched");
                 return candidate;
@@ -153,7 +153,7 @@ public class WaitlistManager {
      */
     private void enqueRecipient(Recipient recipient) {
         WaitlistDeque deque = waitlists.get(recipient.getOrganNeeded());
-        Node node = deque.enqueue(recipient);
+        WaitlistDeque.DLNode<Recipient> node = deque.enqueue(recipient);
         lookup.put(recipient.getId(), node);
     }
 

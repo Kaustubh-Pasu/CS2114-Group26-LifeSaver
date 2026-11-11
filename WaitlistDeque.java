@@ -45,20 +45,28 @@ public class WaitlistDeque
      * 
      * @param r
      *            recipient class
+     * @return the node holding r
      */
     // ~Public Methods ........................................................
-    public void enqueue(Recipient r)
+    public DLNode<Recipient> enqueue(Recipient r)
     {
         if (r == null)
         {
             throw new IllegalArgumentException();
         }
         DLNode<Recipient> newEntry = new DLNode<Recipient>(r);
-        tail.setNextNode(newEntry);
-        newEntry.setPreviousNode(tail);
+        if (isEmpty())
+        {
+            head = newEntry;
+        }
+        else
+        {
+            tail.setNextNode(newEntry);
+            newEntry.setPreviousNode(tail);
+        }
         tail = newEntry;
         size++;
-
+        return newEntry;
     }
 
 
@@ -76,7 +84,14 @@ public class WaitlistDeque
         }
         Recipient r = head.getData();
         head = head.getNextNode();
-        head.setPreviousNode(null);
+        if (head == null)
+        {
+            tail = null;
+        }
+        else
+        {
+            head.setPreviousNode(null);
+        }
         size--;
         return r;
     }
@@ -135,11 +150,29 @@ public class WaitlistDeque
             throw new IllegalArgumentException();
         }
 
-        DLNode<Recipient> newNext = n.getNextNode();
+        DLNode<Recipient> next = n.getNextNode();
         DLNode<Recipient> prev = n.getPreviousNode();
 
-        prev.setNextNode(newNext);
-        newNext.setPreviousNode(prev);
+        if (prev == null)
+        {
+            head = next;
+        }
+        else
+        {
+            prev.setNextNode(next);
+        }
+
+        if (next == null)
+        {
+            tail = prev;
+        }
+        else
+        {
+            next.setPreviousNode(prev);
+        }
+
+        n.setNextNode(null);
+        n.setPreviousNode(null);
         size--;
     }
 
@@ -148,7 +181,7 @@ public class WaitlistDeque
     /**
      * @return array with all recipients
      */
-    public Recipient[] get_all_recipients()
+    public Recipient[] getAllRecipients()
     {
         int l = size();
         DLNode<Recipient> p = head;
