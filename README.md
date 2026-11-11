@@ -2,7 +2,7 @@
 
 **Reflections**
 
-Found errors for parameter types from the spec doc. Identified those errors and implemented correct parameter types in prototype 1. 
+Found errors for parameter types from the spec doc. Identified those errors and implemented correct parameter types in prototype 1. We were missing some methods needed in our spec doc as well. 
 
 WaitlistDeque.java
 - remove(Node node) was changed to remove(DLNode<T> node).
