@@ -99,28 +99,6 @@ public class WaitlistManager {
 
     // ----------------------------------------------------------
     /**
-     * Dequeue the recipient at the front of an organ's waitlist (the one who
-     * has waited longest) and mark them removed.
-     *
-     * @param organType
-     *                  organ waitlist to dequeue from
-     * @return the dequeued Recipient, or null if that waitlist is empty
-     * @throws IllegalArgumentException
-     *                  if the organ is unknown
-     */
-    public Recipient dequeueRecipient(String organType) {
-        WaitlistDeque deque = getDeque(organType);
-        if (deque.isEmpty()) {
-            return null;
-        }
-        Recipient recipient = deque.dequeue();
-        lookup.remove(recipient.getId());
-        recipient.setStatus("removed");
-        return recipient;
-    }
-
-    // ----------------------------------------------------------
-    /**
      * Find the first blood-compatible recipient on the waitlist for the
      * given organ and remove them from the waitlist.
      *

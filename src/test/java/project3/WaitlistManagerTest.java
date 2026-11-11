@@ -280,27 +280,6 @@ class WaitlistManagerTest {
 
 
     @Test
-    void testDequeueRecipient() {
-        addThree("heart");
-        Recipient r = manager.dequeueRecipient("Heart ");
-        assertEquals(1, r.getId());
-        assertEquals("removed", r.getStatus());
-        assertIds(manager.getWaitlist("heart"), 2, 3);
-        assertFalse(manager.removeRecipient(1)); // gone from lookup too
-        manager.addRecipient(1, "A", "heart", "A+", 5); // id is free again
-        assertIds(manager.getWaitlist("heart"), 2, 3, 1);
-    }
-
-
-    @Test
-    void testDequeueRecipientEmptyAndUnknown() {
-        assertNull(manager.dequeueRecipient("kidney"));
-        assertThrows(IllegalArgumentException.class,
-            () -> manager.dequeueRecipient("spleen"));
-    }
-
-
-    @Test
     void testRemoveRecipientTwice() {
         manager.addRecipient(1, "Jax", "kidney", "A+", 5);
         assertTrue(manager.removeRecipient(1));
