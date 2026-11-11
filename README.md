@@ -20,8 +20,12 @@ WaitlistManager.java
 
 **Next Steps**
 - We will start a finalized view (not just a stubbed view)
+- Suprisingly, not much on the backend is missing from the actualy MVP, we really need to create a finalized view, allowing for an easy user-friendly experience when using our application.
+- Recipient.java and WaitlistDeque.java will likely go untouched unless there are notable errors for the mvp. WaitlistManager.java may need some minor adjustments depending on the view.
 - Once the mvp is established as working we will move to our stretch goals
-- The first stretch goal to implement will be implementing a priority queue
+- The first stretch goal to implement will be implementing a priority queue or wait time indicator 
+- WaitlistDeque and WaitlistManager will need to be adjusted when the priority queue or wait time indicator stretch goal is added.
+- We are optimistic and think both currently planned goals could be added. 
 
 **Attributions**
 
