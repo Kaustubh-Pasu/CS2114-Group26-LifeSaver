@@ -34,7 +34,7 @@ the unknowns from our spec doc). The waittime stretch goal was mentioned specifi
 **Attributions**
 
 - Andrew Kim: WaitlistDeque + WaitlistDequeTest
-- Kaustubh Pasumarthi: WaitlistManager
+- Kaustubh Pasumarthi: WaitlistManager + WaitlistManagerTest
 - Elijah O'Donoghue: Recipient + RecipientTest
 - Prateek: Stubbed View + revising other classes
 
