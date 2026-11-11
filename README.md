@@ -2,26 +2,27 @@
 
 **Reflections**
 
-Found errors for parameter types from the spec doc. Identified those errors and implemented correct parameter types in prototype 1. We were missing some methods needed in our spec doc as well. 
+Found errors for parameter types from the spec doc and our plans. Identified those errors and implemented correct parameter types in prototype 1. We were missing some methods needed in our spec doc as well. Fortunately, not that much needed to be changed.
 
 WaitlistDeque.java
 - remove(Node node) was changed to remove(DLNode<T> node).
-- While we always intended to use DLNode, there was a transcription mistake on the doc mentioning regular Node. 
+- While we always intended to use DLNode, there was a transcription mistake on the doc mentioning regular Node hence the need for a change.
 
 Recipient.Java
-- Initially was missing "getBloodType()" and "setBloodType()"
+- Initially our planning was missing "getBloodType()" and "setBloodType()" despite mentioning bloodType as a feature 
 - Fixed this, otherwise not much changed. 
 
 WaitlistManager.java
 - nothing really significant changed from plans
+- more will need to be added and modified with stretch goal addition
 
 The model was able to stand alone. We still haven't completely figured how to implement all of our stretch goals (which was one of
-the unknowns from our spec doc). The waittime stretch goal was mentioned specifically in the spec doc. The finalized view and MVP does not work yet. But the backend stuff works well. 
+the unknowns from our spec doc). The waittime stretch goal was mentioned specifically in the spec doc. The finalized view and MVP does not work yet. But the back-end stuff works well. 
 
 
 **Next Steps**
 - We will start a finalized view (not just a stubbed view)
-- Surprisingly, not much on the backend is missing from the actually MVP, we really need to create a finalized view, allowing for an easy user-friendly experience when using our application.
+- Surprisingly, not much on the back-end is missing from the actually MVP, we really need to create a finalized view, allowing for an easy user-friendly experience when using our application.
 - Recipient.java and WaitlistDeque.java will likely go untouched unless there are notable errors for the mvp. WaitlistManager.java may need some minor adjustments depending on the view.
 - Once the mvp is established as working we will move to our stretch goals
 - The first stretch goal to implement will be implementing a priority queue or wait time indicator 
