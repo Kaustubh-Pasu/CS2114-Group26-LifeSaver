@@ -139,7 +139,7 @@ class OutputViewerTest {
 
     @Test
     void testRemoveExisting() {
-        viewer("2").promptRemoveRecipient();
+        viewer("1", "2").promptRemoveRecipient();
         assertEquals("removeRecipient", stub.lastCall);
         assertTrue(printed().contains("Removed patient 2."));
     }
@@ -147,16 +147,55 @@ class OutputViewerTest {
 
     @Test
     void testRemoveUnknownId() {
-        viewer("99").promptRemoveRecipient();
+        viewer("1", "99").promptRemoveRecipient();
         assertTrue(printed().contains("No patient has ID 99."));
     }
 
 
     @Test
     void testRemoveRepromptsOnText() {
-        viewer("x", "1").promptRemoveRecipient();
+        viewer("1", "x", "1").promptRemoveRecipient();
         assertTrue(printed().contains("\"x\" is not a whole number."));
         assertEquals(1, stub.lastId);
+    }
+
+
+    @Test
+    void testRemoveBadOptionReprompts() {
+        viewer("5", "1", "2").promptRemoveRecipient();
+        assertTrue(printed().contains("Enter 1 or 2."));
+        assertEquals("removeRecipient", stub.lastCall);
+    }
+
+
+    @Test
+    void testRemoveCancelAtOption() {
+        viewer("cancel").promptRemoveRecipient();
+        assertTrue(printed().contains("Cancelled."));
+        assertEquals(null, stub.lastCall);
+    }
+
+
+    @Test
+    void testDequeueFront() {
+        viewer("2", "kidney").promptRemoveRecipient();
+        assertEquals("dequeueRecipient", stub.lastCall);
+        assertTrue(printed().contains("Dequeued: ID 1 | Jax"));
+    }
+
+
+    @Test
+    void testDequeueEmpty() {
+        viewer("2", "heart").promptRemoveRecipient();
+        assertTrue(printed().contains("Nobody is waiting for heart."));
+    }
+
+
+    @Test
+    void testDequeueUnknownOrganReprompts() {
+        viewer("2", "spleen", "kidney").promptRemoveRecipient();
+        assertTrue(printed().contains("Unknown organ: spleen"));
+        assertEquals("kidney", stub.lastOrgan);
     }
 
 

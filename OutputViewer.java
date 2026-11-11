@@ -36,6 +36,11 @@ public class OutputViewer {
     /** View every waitlist. */
     public static final int VIEW_ALL = 5;
 
+    /** Remove sub-menu: remove by patient ID. */
+    public static final int REMOVE_BY_ID = 1;
+    /** Remove sub-menu: dequeue the front of an organ's waitlist. */
+    public static final int REMOVE_DEQUEUE = 2;
+
     /** Organ types shown by "view all"; must match WaitlistManager. */
     private static final String[] ORGANS = { "heart", "kidney", "liver",
         "lung", "pancreas", "intestine" };
@@ -193,9 +198,66 @@ public class OutputViewer {
 
     // ----------------------------------------------------------
     /**
-     * Ask for a patient ID and remove that patient from their waitlist.
+     * Ask how to remove a patient: by ID (anywhere in a waitlist) or by
+     * dequeuing the front of an organ's waitlist.
      */
     public void promptRemoveRecipient() {
+        out.println(REMOVE_BY_ID + ". Remove by patient ID");
+        out.println(REMOVE_DEQUEUE
+            + ". Dequeue next patient from an organ's waitlist");
+        while (true) {
+            Integer mode = readIntOrCancel("Choose a removal option: ");
+            if (mode == null) {
+                return;
+            }
+            if (mode == REMOVE_BY_ID) {
+                promptRemoveById();
+                return;
+            }
+            if (mode == REMOVE_DEQUEUE) {
+                promptDequeue();
+                return;
+            }
+            out.println("Enter " + REMOVE_BY_ID + " or " + REMOVE_DEQUEUE
+                + ".");
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for an organ and dequeue the patient at the front of its waitlist.
+     */
+    public void promptDequeue() {
+        while (true) {
+            String organ = readLineOrCancel("Organ " + organList() + ": ");
+            if (organ == null) {
+                return;
+            }
+            try {
+                Recipient r = manager.dequeueRecipient(organ);
+                if (r == null) {
+                    out.println("Nobody is waiting for "
+                        + organ.trim().toLowerCase() + ".");
+                }
+                else {
+                    out.println("Dequeued: " + formatRecipient(r));
+                    displayWaitlist(organ);
+                }
+                return;
+            }
+            catch (IllegalArgumentException e) {
+                out.println(e.getMessage() + ". Please try again.");
+            }
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for a patient ID and remove that patient from their waitlist.
+     */
+    public void promptRemoveById() {
         Integer id = readIntOrCancel("ID of patient to remove: ");
         if (id == null) {
             return;

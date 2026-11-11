@@ -16,6 +16,8 @@ import java.util.Arrays;
  * <li>addRecipient throws for ID 1 or 2 (already "registered") or an unknown
  * organ; otherwise it just records the call. Nothing is stored.</li>
  * <li>removeRecipient returns true for IDs 1 and 2, false otherwise.</li>
+ * <li>dequeueRecipient("kidney") returns fixed recipient 1; other known
+ * organs return null (empty); an unknown organ throws.</li>
  * <li>matchOrgan("kidney", ...) returns fixed recipient 1; other known organs
  * return null; an unknown organ throws.</li>
  * </ul>
@@ -84,6 +86,16 @@ public class StubWaitlistManager extends WaitlistManager {
         record("removeRecipient", null);
         lastId = id;
         return id == 1 || id == 2;
+    }
+
+
+    @Override
+    public Recipient dequeueRecipient(String organType) {
+        record("dequeueRecipient", organType);
+        if (checkOrgan(organType).equals("kidney")) {
+            return kidneyList[0];
+        }
+        return null;
     }
 
 
