@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
  * Recipient represents someone waiting on the organ wait list
  *
  * @author Elijah Jax O'Donoghue
- * @version 2026.11.9
+ * @version 2026.11.11
  */
 public class Recipient {
     private int id;
@@ -85,11 +85,6 @@ public class Recipient {
     }
 
 
-    public String getBloodType() {
-        return this.bloodType;
-    }
-
-
     public LocalDateTime getRegistrationDate() {
         return this.registrationDate;
     }
@@ -117,5 +112,14 @@ public class Recipient {
 
     public void setStatus(String statusCurrent) {
         this.status = statusCurrent;
+    }
+    
+    public String getBloodType() {
+        return this.bloodType;
+    }
+
+
+    public void setBloodType(String blood) {
+        this.bloodType = blood;
     }
 }
