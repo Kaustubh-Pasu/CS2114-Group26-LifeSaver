@@ -6,19 +6,28 @@ Found errors for parameter types from the spec doc. Identified those errors and 
 
 WaitlistDeque.java
 - remove(Node node) was changed to remove(DLNode<T> node).
+- While we always intended to use DLNode, there was a transcription mistake on the doc mentioning regular Node. 
+
+Recipient.Java
+- Initially was missing "getBloodType()" and "setBloodType()"
+- Fixed this, otherwise not much changed. 
+
+WaitlistManager.java
+- nothing really significant changed from plans
 
 
 
 
 **Next Steps**
-
-We will implement view and control via the console
+- We will start a finalized view (not just a stubbed view)
+- Once the mvp is established as working we will move to our stretch goals
+- The first stretch goal to implement will be implementing a priority queue
 
 **Attributions**
 
 Andrew Kim: WaitlistDeque
 Kaustubh Pasumarthi: WaitlistManager
-
+Elijah O'Donoghue: Recipient + RecipientTest
 
 
 **GenAI Notes**
