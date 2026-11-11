@@ -17,7 +17,9 @@ We will implement view and control via the console
 **Attributions**
 
 Andrew Kim: WaitlistDeque
+Kaustubh Pasumarthi: WaitlistManager
 
 
 
 **GenAI Notes**
+GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
