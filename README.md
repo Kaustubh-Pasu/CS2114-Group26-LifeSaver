@@ -2,7 +2,7 @@
 
 **Reflections**
 
-Found errors for parameter types from the spec doc. Identified those errors and implemented correct parameter types in prototype 1. 
+Found errors for parameter types from the spec doc. Identified those errors and implemented correct parameter types in prototype 1. We were missing some methods needed in our spec doc as well. 
 
 WaitlistDeque.java
 - remove(Node node) was changed to remove(DLNode<T> node).
@@ -29,10 +29,12 @@ WaitlistManager.java
 
 **Attributions**
 
-Andrew Kim: WaitlistDeque
-Kaustubh Pasumarthi: WaitlistManager
-Elijah O'Donoghue: Recipient + RecipientTest, NextSteps 
+- Andrew Kim: WaitlistDeque + WaitlistDequeTest
+- Kaustubh Pasumarthi: WaitlistManager
+- Elijah O'Donoghue: Recipient + RecipientTest
 
 
 **GenAI Notes**
-GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
+
+- GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
+- GenAI was used to help import APIs needed for running JUnit Tests - WaitlistDequeTest, Andrew
