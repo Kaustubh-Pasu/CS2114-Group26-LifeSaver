@@ -16,7 +16,7 @@ WaitlistManager.java
 - nothing really significant changed from plans
 
 The model was able to stand alone. We still haven't completely figured how to implement all of our stretch goals (which was one of
-the unknowns from our spec doc). The waittime stretch goal was mentioned specifically in the spec doc. 
+the unknowns from our spec doc). The waittime stretch goal was mentioned specifically in the spec doc. The finalized view and MVP does not work yet. But the backend stuff works well. 
 
 
 **Next Steps**
