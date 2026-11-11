@@ -12,6 +12,7 @@ WaitlistDeque.java
 
 **Next Steps**
 
+We will implement view and control via the console
 
 **Attributions**
 
