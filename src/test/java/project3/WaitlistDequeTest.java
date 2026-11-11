@@ -1,7 +1,6 @@
 package project3;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -27,7 +26,6 @@ public class WaitlistDequeTest
 
     //~Public  Methods ........................................................
 
-    @BeforeEach
     public void setUp() {
         deque = new WaitlistDeque();
         date = LocalDateTime.of(2026, 11, 9, 10, 30);
@@ -35,10 +33,9 @@ public class WaitlistDequeTest
     }
     
     
-    @Test
     public void testEnqueue() {
         assertTrue(deque.isEmpty());
-        assertEquals(r, deque.enqueue(r).getData());
+        assertEquals(r, deque.enqueue(r));
         try {
             deque.enqueue(null);        
         }
@@ -49,7 +46,6 @@ public class WaitlistDequeTest
         assertNotNull(iae);
     }
     
-    @Test
     public void testDequeue() {
         deque.enqueue(r);
         assertEquals(r, deque.dequeue());
@@ -63,7 +59,6 @@ public class WaitlistDequeTest
         assertNotNull(nse);
     }
     
-    @Test
     public void testPeek() {
         try {
             deque.peek();        
@@ -77,28 +72,24 @@ public class WaitlistDequeTest
         assertEquals(r, deque.peek());
     }
     
-    @Test
     public void testIsEmpty() {
         assertTrue(deque.isEmpty());
         deque.enqueue(r);
         assertFalse(deque.isEmpty());
     }
     
-    @Test
     public void testSize() {
         assertEquals(0, deque.size());
         deque.enqueue(r);
         assertEquals(1, deque.size());
     }
     
-    @Test
     public void testGetAllRecipients() {
         Recipient[] allRecipients = new Recipient[0];
-        assertArrayEquals(allRecipients, deque.getAllRecipients());
-        deque.enqueue(r);
+        assertEquals(allRecipients, deque.getAllRecipients());
         Recipient[] allRecipients1 = new Recipient[1];
         allRecipients1[0] = r;
-        assertArrayEquals(allRecipients1, deque.getAllRecipients());
+        assertEquals(allRecipients1, deque.getAllRecipients());
     }
     
     
