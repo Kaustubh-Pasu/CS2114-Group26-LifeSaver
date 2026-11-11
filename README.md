@@ -26,6 +26,8 @@ the unknowns from our spec doc). The waittime stretch goal was mentioned specifi
 - Once the mvp is established as working we will move to our stretch goals
 - The first stretch goal to implement will be implementing a priority queue or wait time indicator 
 - WaitlistDeque and WaitlistManager will need to be adjusted when the priority queue or wait time indicator stretch goal is added.
+- PriorityQueue will be a particularly invasive change, it will  involve changing our current enqueue(Recipient recipient) method. Remove methods likely will go unchanged because the remove method is logically the same across regular and priority queues.
+- Waittime will likely add and additional calculateWaittime(int id) method where the id is used to find the specific recipient waitng. Based on where they are in the queue and the current rate of people getting of the queue it calculates the waittime (assuming no donor that directly gives to them like a family member). It would also need an additional way to track how quickly people in front are getting off. We are still unsure of how to implement this, perhaps using file i/o writing we could track java DateTimes in the file i/o (since DateTimes are already used in the recipient class). From the we would need to add a file writing to the dequeue(), so it reports how long a patient was on the list. Again, we aren't sure the specifics, but from these values it wouldn't be too difficult to get an approximate wait time for any given recipient. 
 - We are optimistic and think both currently planned goals could be added. 
 
 **Attributions**
@@ -33,7 +35,7 @@ the unknowns from our spec doc). The waittime stretch goal was mentioned specifi
 - Andrew Kim: WaitlistDeque + WaitlistDequeTest
 - Kaustubh Pasumarthi: WaitlistManager
 - Elijah O'Donoghue: Recipient + RecipientTest
-
+- Prateek: Stubbed View + revising other classes
 
 **GenAI Notes**
 
