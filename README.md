@@ -25,7 +25,7 @@ WaitlistManager.java
 
 **Attributions**
 
-- Andrew Kim: WaitlistDeque
+- Andrew Kim: WaitlistDeque + WaitlistDequeTest
 - Kaustubh Pasumarthi: WaitlistManager
 - Elijah O'Donoghue: Recipient + RecipientTest
 
