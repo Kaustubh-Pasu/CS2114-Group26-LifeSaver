@@ -31,4 +31,6 @@ Elijah O'Donoghue: Recipient + RecipientTest
 
 
 **GenAI Notes**
+
 GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
+GenAI was used to help import APIs needed for running JUnit Tests
