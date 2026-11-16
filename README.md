@@ -25,6 +25,7 @@
 
 
 -End of work by November 18-
+
 ----------------------------------------------------------------------------------------------------------------------------------
 **November 11**
 
@@ -71,4 +72,4 @@ the unknowns from our spec doc). The waittime stretch goal was mentioned specifi
 - GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
 - GenAI was used to help import APIs needed for running JUnit Tests - WaitlistDequeTest, Andrew
 
-**--End of work by November 11-**
+--End of work by November 11-
