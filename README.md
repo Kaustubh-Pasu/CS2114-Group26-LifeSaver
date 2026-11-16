@@ -1,5 +1,33 @@
 # CS2114-Group26-Organ-Donor-System
 
+**November 18**
+
+**One non-trivial feature added**
+
+
+
+**Reflections**
+
+
+
+**Next Steps**
+
+
+
+**Attributions**
+
+
+
+**GenAI Notes**
+
+
+
+
+
+-End of work by November 18-
+----------------------------------------------------------------------------------------------------------------------------------
+**November 11**
+
 **Reflections**
 
 Found errors for parameter types from the spec doc and our plans. Identified those errors and implemented correct parameter types in prototype 1. We were missing some methods needed in our spec doc as well. Fortunately, not that much needed to be changed.
@@ -42,3 +70,5 @@ the unknowns from our spec doc). The waittime stretch goal was mentioned specifi
 
 - GenAI Found that in the original version of WaitlistManager did not properly call WaitlistDeque.
 - GenAI was used to help import APIs needed for running JUnit Tests - WaitlistDequeTest, Andrew
+
+**--End of work by November 11-**
