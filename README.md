@@ -20,12 +20,14 @@
 
 
 **Attributions**
+
 Elijah: Wait time implementation
 
 Andrew: Prevented user entering blood type without indicating RH type, now shows blood type group in uppercase.
 
 
 **GenAI Notes**
+
 Elijah: Used Gen AI to plan out implementation of wait time and which files would need changing
 
 Andrew: Used Gen AI to confirm the use of toUpperCase() on an entry with non-alphabet letters. 
