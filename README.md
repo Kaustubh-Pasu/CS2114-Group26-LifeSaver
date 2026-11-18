@@ -4,22 +4,22 @@
 
 **One non-trivial feature added**
 
+- Wait time stretch goal
+
+**Reflections** (need expansion)
 
 
-**Reflections**
 
-
-
-**Next Steps**
-
+**Next Steps** (need expansion)
+-Priority Queue implementation 
 
 
 **Attributions**
-
+Elijah: Wait time implementation
 
 
 **GenAI Notes**
-
+Elijah: Used Gen AI to plan out implementation of wait time and which files would need changing
 
 
 
