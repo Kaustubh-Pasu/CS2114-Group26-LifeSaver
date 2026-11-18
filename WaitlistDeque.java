@@ -138,7 +138,29 @@ public class WaitlistDeque
     {
         return this.size;
     }
-
+    private void markFront()
+    {
+        if (head != null && head.getData().getFrontSince() == null)
+        {
+            head.getData().setFrontSince(LocalDateTime.now());
+        }
+    }
+    
+    public int positionOf(DLNode<Recipient> n)
+    {
+        int position = 1;
+        DLNode<Recipient> p = head;
+        while (p != null)
+        {
+            if (p == n)
+            {
+                return position;
+            }
+            p = p.getNextNode();
+            position++;
+        }
+        return -1;
+    }
 
     // ----------------------------------------------------------
     /**
@@ -179,6 +201,7 @@ public class WaitlistDeque
         size--;
         markFront();
     }
+
 
 
     // ----------------------------------------------------------
@@ -328,28 +351,6 @@ public class WaitlistDeque
             previous = previousNode;
         }
         
-        private void markFront()
-        {
-            if (head != null && head.getData().getFrontSince() == null)
-            {
-                head.getData().setFrontSince(LocalDateTime.now());
-            }
-        }
         
-        public int positionOf(DLNode<Recipient> n)
-        {
-            int position = 1;
-            DLNode<Recipient> p = head;
-            while (p != null)
-            {
-                if (p == n)
-                {
-                    return position;
-                }
-                p = p.getNextNode();
-                position++;
-            }
-            return -1;
-        }
     }
 }
