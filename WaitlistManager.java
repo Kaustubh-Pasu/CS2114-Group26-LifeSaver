@@ -1,5 +1,5 @@
 package project3;
-
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -19,6 +19,8 @@ public class WaitlistManager {
 
     private HashMap<String, WaitlistDeque> waitlists;
     private HashMap<Integer, WaitlistDeque.DLNode<Recipient>> lookup;
+    private HashMap<String, Long> totalFrontSeconds;
+    private HashMap<String, Integer> frontCount;
 
     // ----------------------------------------------------------
     /**
@@ -28,8 +30,12 @@ public class WaitlistManager {
     public WaitlistManager() {
         waitlists = new HashMap<>();
         lookup = new HashMap<>();
+        totalFrontSeconds = new HashMap<>();
+        frontCount = new HashMap<>();
         for (String organ : ORGANS) {
             waitlists.put(organ, new WaitlistDeque());
+            totalFrontSeconds.put(organ, 0L);
+            frontCount.put(organ, 0);
         }
     }
 
@@ -115,6 +121,7 @@ public class WaitlistManager {
         }
         Recipient recipient = deque.dequeue();
         lookup.remove(recipient.getId());
+        recordFrontWait(recipient);
         recipient.setStatus("removed");
         return recipient;
     }
@@ -143,6 +150,7 @@ public class WaitlistManager {
             if (isCompatible(donorGroup, recipientGroup)) {
                 WaitlistDeque.DLNode<Recipient> node = lookup.remove(candidate.getId());
                 deque.remove(node);
+                recordFrontWait(candidate);
                 candidate.setStatus("matched");
                 return candidate;
             }
@@ -254,4 +262,32 @@ public class WaitlistManager {
                 || recipientGroup.equals("AB")
                 || donorGroup.equals(recipientGroup);
     }
+    
+    private void recordFrontWait(Recipient r) {
+        if (r.getFrontSince() == null) {
+            return;
+        }
+        long seconds = Duration.between(
+            r.getFrontSince(), LocalDateTime.now()).getSeconds();
+        String organ = r.getOrganNeeded();
+        totalFrontSeconds.put(organ, totalFrontSeconds.get(organ) + seconds);
+        frontCount.put(organ, frontCount.get(organ) + 1);
+    }
+    
+    public Duration estimateWaitTime(int id) {
+        WaitlistDeque.DLNode<Recipient> node = lookup.get(id);
+        if (node == null) {
+            throw new IllegalArgumentException("No patient with id " + id);
+        }
+        String organ = node.getData().getOrganNeeded();
+        int count = frontCount.get(organ);
+        if (count == 0) {
+            return null;
+        }
+        long averageSeconds = totalFrontSeconds.get(organ) / count;
+        int position = waitlists.get(organ).positionOf(node);
+        return Duration.ofSeconds(averageSeconds * position);
+    }
+    
+    
 }

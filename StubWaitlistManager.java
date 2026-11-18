@@ -1,5 +1,5 @@
 package project3;
-
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -135,5 +135,15 @@ public class StubWaitlistManager extends WaitlistManager {
             }
         }
         throw new IllegalArgumentException("Unknown organ: " + organ);
+    }
+    
+    @Override
+    public Duration estimateWaitTime(int id) {
+        record("estimateWaitTime", null);
+        lastId = id;
+        if (id == 1 || id == 2) {
+            return Duration.ofDays(20);
+        }
+        throw new IllegalArgumentException("No patient with id " + id);
     }
 }

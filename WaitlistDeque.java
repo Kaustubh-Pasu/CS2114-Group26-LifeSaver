@@ -1,6 +1,7 @@
 package project3;
 
 import java.util.NoSuchElementException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -66,6 +67,7 @@ public class WaitlistDeque
         }
         tail = newEntry;
         size++;
+        markFront();
         return newEntry;
     }
 
@@ -93,6 +95,7 @@ public class WaitlistDeque
             head.setPreviousNode(null);
         }
         size--;
+        markFront();
         return r;
     }
 
@@ -135,7 +138,29 @@ public class WaitlistDeque
     {
         return this.size;
     }
-
+    private void markFront()
+    {
+        if (head != null && head.getData().getFrontSince() == null)
+        {
+            head.getData().setFrontSince(LocalDateTime.now());
+        }
+    }
+    
+    public int positionOf(DLNode<Recipient> n)
+    {
+        int position = 1;
+        DLNode<Recipient> p = head;
+        while (p != null)
+        {
+            if (p == n)
+            {
+                return position;
+            }
+            p = p.getNextNode();
+            position++;
+        }
+        return -1;
+    }
 
     // ----------------------------------------------------------
     /**
@@ -174,7 +199,9 @@ public class WaitlistDeque
         n.setNextNode(null);
         n.setPreviousNode(null);
         size--;
+        markFront();
     }
+
 
 
     // ----------------------------------------------------------
@@ -323,5 +350,7 @@ public class WaitlistDeque
         {
             previous = previousNode;
         }
+        
+        
     }
 }
