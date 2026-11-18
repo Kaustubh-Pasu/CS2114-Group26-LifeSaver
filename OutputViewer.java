@@ -151,6 +151,7 @@ public class OutputViewer {
             out.println("\"" + line + "\" is not one of the options. "
                 + "Enter a number from " + EXIT + " to " + ESTIMATE + ".");
     }
+    }
 
 
     // ----------------------------------------------------------
