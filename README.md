@@ -8,7 +8,7 @@ A console app that keeps one first-in, first-out waitlist per organ, registers a
 
 ## How to Compile and Run
 
-All classes are in package `project3`. You need Java 11 or newer.
+All classes are in the package `project3`. You need Java 11 or newer.
 
 ### Eclipse
 
