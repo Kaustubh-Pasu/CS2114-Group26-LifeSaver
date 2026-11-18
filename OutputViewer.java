@@ -505,7 +505,7 @@ public class OutputViewer {
             ? "unknown"
             : r.getRegistrationDate().format(DATE_FORMAT);
         return "ID " + r.getId() + " | " + r.getName() + " | "
-            + r.getOrganNeeded() + " | " + r.getBloodType() + " | urgency "
+            + r.getOrganNeeded() + " | " + r.getBloodType().toUpperCase() + " | urgency "
             + r.getUrgencyLevel() + " | " + r.getStatus() + " | since "
             + date;
     }
