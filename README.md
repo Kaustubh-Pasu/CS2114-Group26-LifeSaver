@@ -10,19 +10,23 @@
 
 - still dont have priority queue
 - changes with waittime impacted most files but not dramatic restructuring, just adding new methods
+- user was able to add recipient without indicating blood type's RH factor; now rejects entry when the user did not indicate RH factor (+ or -).
+- blood type group was shown in lowercase; all blood type groups are now indicated as uppercase. 
 
 **Next Steps** (need expansion)
 
--Priority Queue implementation 
+- Priority Queue implementation 
+- When user enters invalid input, rejects adding it to the list after user enters all other fields. Might add a feature that prompts user to enter valid entry for each fields, not all at once at the end. 
 
 
 **Attributions**
 Elijah: Wait time implementation
+Andrew: Prevented user entering blood type without indicating RH type, now shows blood type group in uppercase.
 
 
 **GenAI Notes**
 Elijah: Used Gen AI to plan out implementation of wait time and which files would need changing
-
+Andrew: Used Gen AI to confirm the use of toUpperCase() on an entry with non-alphabet letters. 
 
 
 
