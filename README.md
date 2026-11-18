@@ -173,7 +173,7 @@ The next feature is the priority queue. Today, `WaitlistDeque` is a concrete cla
 | # | Item | Owner | Estimate |
 |---|---|---|---|
 | 1 | Add validation to the Recipient constructor and setters (name, urgency 1-10, blood type, status) and update `RecipientTest` and the two `WaitlistManagerTest` cases that expect bad values to pass | Elijah | 1-2 hours |
-| 2 | Require the Rh factor (`+`/`-`) and store blood types in uppercase in the model; add tests | Andrew | 1 hour |
+| 2 | Rh factor (`+`/`-`) is now required by the model and blood types display in uppercase; update `WaitlistManagerTest.testMatchOrganNoRhAndCaseInsensitive` (it still expects `AB` with no Rh to be accepted) and add a test for the new rejection | Andrew | 30 minutes |
 | 3 | Priority queue: order each line by urgency, then registration time as the tiebreaker; keep O(1) removal by ID | Andrew (WaitlistDeque), Elijah (WaitlistManager) | 4-6 hours |
 | 4 | Tests for the priority queue: order after interleaved adds, matches, and removes; ties on urgency | Kaustubh | 2 hours |
 | 5 | Edit a patient's urgency from the menu (re-sorts them in the priority queue) | Prateek (view), Elijah (controller) | 2 hours |
