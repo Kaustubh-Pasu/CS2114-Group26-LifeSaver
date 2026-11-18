@@ -6,17 +6,30 @@
 
 - Wait time stretch goal
 
+**Other features added**
+
+- Each field is checked as soon as it is typed when adding a recipient (only the wrong field is asked again)
+- "Look up a patient" menu option (details, place in line, estimated wait)
+- "View all waitlists" now shows a one-line count per organ and only prints organs that have people waiting
+
 **Reflections** (need expansion)
 
 - still dont have priority queue
 - changes with waittime impacted most files but not dramatic restructuring, just adding new methods
 - user was able to add recipient without indicating blood type's RH factor; now rejects entry when the user did not indicate RH factor (+ or -).
 - blood type group was shown in lowercase; all blood type groups are now indicated as uppercase. 
+- testing wait time was a problem because estimates are measured in days, and we can't wait days for a JUnit test. We fixed this by having WaitlistManager and WaitlistDeque read the time from a java.time.Clock. The app uses the real clock; tests pass in a FakeClock and call advance(Duration.ofDays(10)) to make 10 days "pass" instantly.
+- the add-recipient form used to only report bad input after all five fields were typed, then make the user start over. The view now asks WaitlistManager (isRegistered, isKnownOrgan, isValidBloodType) right after each field, and also checks that the name isn't blank and urgency is 1-10.
+- urgency outside 1-10 is now rejected by the view, but the model still accepts it (WaitlistManagerTest has a test expecting -1 to work). We need to decide whether the model should reject it too.
+- found that WaitlistDequeTest's methods have no @Test annotations, so none of its tests actually run. Once they do, testEnqueue's assertEquals(r, deque.enqueue(r)) will fail because enqueue returns the node, not the Recipient.
 
 **Next Steps** (need expansion)
 
 - Priority Queue implementation 
-- When user enters invalid input, rejects adding it to the list after user enters all other fields. Might add a feature that prompts user to enter valid entry for each fields, not all at once at the end. 
+- ~~When user enters invalid input, rejects adding it to the list after user enters all other fields. Might add a feature that prompts user to enter valid entry for each fields, not all at once at the end.~~ Done (per-field checks).
+- Add @Test annotations to WaitlistDequeTest and fix testEnqueue
+- Decide whether the model should also reject urgency outside 1-10
+- Edit a patient's urgency (useful once the priority queue exists)
 
 
 **Attributions**
@@ -25,6 +38,8 @@ Elijah: Wait time implementation
 
 Andrew: Prevented user entering blood type without indicating RH type, now shows blood type group in uppercase.
 
+Prateek: Per-field input checks in the add-recipient form, "Look up a patient" menu option, "View all" summary, FakeClock + Clock support in WaitlistManager/WaitlistDeque so wait time can be tested, WaitTimeTest (22 tests) and new OutputViewerTest tests for wait time, lookup, and input checks.
+
 
 **GenAI Notes**
 
@@ -32,6 +47,7 @@ Elijah: Used Gen AI to plan out implementation of wait time and which files woul
 
 Andrew: Used Gen AI to confirm the use of toUpperCase() on an entry with non-alphabet letters. 
 
+Prateek: Used Gen AI  to come up with the fake clock approach for testing wait times without waiting, and write the new tests.
 
 
 -End of work by November 18-
