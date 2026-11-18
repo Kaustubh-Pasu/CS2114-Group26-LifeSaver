@@ -257,6 +257,10 @@ public class WaitlistManager {
         String group = bloodType.trim().toUpperCase();
         if (group.endsWith("+") || group.endsWith("-")) {
             group = group.substring(0, group.length() - 1);
+            group = group.toUpperCase();
+        }
+        else{
+            throw new IllegalArgumentException("RH type indicator is required");
         }
         if (!group.equals("A") && !group.equals("B") && !group.equals("AB")
                 && !group.equals("O")) {
