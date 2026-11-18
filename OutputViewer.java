@@ -1,5 +1,5 @@
 package project3;
-
+import java.time.Duration;
 import java.io.PrintStream;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -35,6 +35,8 @@ public class OutputViewer {
     public static final int VIEW_ONE = 4;
     /** View every waitlist. */
     public static final int VIEW_ALL = 5;
+    /** estimate time */
+    public static final int ESTIMATE = 6;
 
     /** Remove sub-menu: remove by patient ID. */
     public static final int REMOVE_BY_ID = 1;
@@ -126,6 +128,7 @@ public class OutputViewer {
         out.println(MATCH + ". Match donor organ");
         out.println(VIEW_ONE + ". View one organ's waitlist");
         out.println(VIEW_ALL + ". View all waitlists");
+        out.println(ESTIMATE + ". Estimate wait time");
         out.println(EXIT + ". Exit");
     }
 
@@ -135,19 +138,18 @@ public class OutputViewer {
      * Show the menu and read a choice. Text that is not an integer, or a
      * number outside the menu, is rejected and the menu is redrawn.
      *
-     * @return a valid menu option (EXIT through VIEW_ALL)
+     * @return a valid menu option (EXIT through ESTIMATE)
      */
     public int getMenuChoice() {
         while (true) {
             displayMenu();
             String line = readLine("Choose an option: ");
             Integer choice = parseInt(line);
-            if (choice != null && choice >= EXIT && choice <= VIEW_ALL) {
+            if (choice != null && choice >= EXIT && choice <= ESTIMATE) {
                 return choice;
             }
             out.println("\"" + line + "\" is not one of the options. "
-                + "Enter a number from " + EXIT + " to " + VIEW_ALL + ".");
-        }
+                + "Enter a number from " + EXIT + " to " + ESTIMATE + ".");
     }
 
 
@@ -399,6 +401,9 @@ public class OutputViewer {
             case VIEW_ALL:
                 displayWaitlists();
                 break;
+            case ESTIMATE:
+                promptEstimateWaitTime();
+                break;
             default:
                 break;
         }
@@ -470,6 +475,35 @@ public class OutputViewer {
     /** Thrown internally when the input stream runs out. */
     private static class InputClosedException extends RuntimeException {
         private static final long serialVersionUID = 1L;
+    }
+    
+    public void promptEstimateWaitTime() {
+        while (true) {
+            Integer id = readIntOrCancel("Patient ID: ");
+            if (id == null) {
+                return;
+            }
+            try {
+                Duration wait = manager.estimateWaitTime(id);
+                if (wait == null) {
+                    out.println("Not enough history yet to estimate a wait "
+                        + "time for patient " + id + ".");
+                }
+                else {
+                    out.println("Estimated wait for patient " + id + ": "
+                        + formatDuration(wait));
+                }
+                return;
+            }
+            catch (IllegalArgumentException e) {
+                out.println(e.getMessage() + ". Please try again.");
+            }
+        }
+    }
+    
+    public String formatDuration(Duration d) {
+        return d.toDays() + " days, " + (d.toHours() % 24) + " hours, "
+            + (d.toMinutes() % 60) + " minutes";
     }
 
 

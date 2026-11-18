@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
  * Recipient represents someone waiting on the organ wait list
  *
  * @author Elijah Jax O'Donoghue
- * @version 2026.11.11
+ * @version 2026.11.17
  */
 public class Recipient {
     private int id;
@@ -16,6 +16,7 @@ public class Recipient {
     private LocalDateTime registrationDate;
     private int urgencyLevel;
     private String status;
+    private LocalDateTime frontSince;
 
     // ----------------------------------------------------------
     /**
@@ -51,6 +52,7 @@ public class Recipient {
         this.registrationDate = registrationDate;
         this.urgencyLevel = urgencyLevel;
         this.status = status;
+        
 
     }
 
@@ -108,7 +110,12 @@ public class Recipient {
     public String getStatus() {
         return this.status;
     }
-
+    public LocalDateTime getFrontSince() {
+        return this.frontSince;
+    }
+    public void setFrontSince(LocalDateTime frontTime) {
+        this.frontSince = frontTime;
+    }
 
     public void setStatus(String statusCurrent) {
         this.status = statusCurrent;
