@@ -9,18 +9,20 @@ import java.util.Scanner;
  * what the user types, turns it into the ints and Strings WaitlistManager
  * expects, and prints whatever comes back.
  *
- * The view only checks that typed text can be read as the right type. All
- * other validation (duplicate IDs, unknown organs, bad blood types) lives in
- * the model; the view catches the IllegalArgumentException, prints its
- * message, and asks again. The view never touches a WaitlistDeque, a node, or
- * the ID lookup map.
+ * When adding a recipient, each field is checked as soon as it is typed
+ * (asking the manager whether an ID is taken, an organ exists, or a blood
+ * type is valid) so the user only re-enters the field that was wrong. The
+ * model still does its own validation; if it rejects something anyway, the
+ * view catches the IllegalArgumentException, prints its message, and asks
+ * again. The view never touches a WaitlistDeque, a node, or the ID lookup
+ * map.
  *
  * After every action that changes state, the view pulls the affected waitlist
  * again with getWaitlist() and redraws it (no observer needed in a
  * single-threaded console app).
  *
  * @author Prateek Malekar
- * @version 2026.11.11
+ * @version 2026.11.18
  */
 public class OutputViewer {
     /** Menu option numbers. */
@@ -35,8 +37,17 @@ public class OutputViewer {
     public static final int VIEW_ONE = 4;
     /** View every waitlist. */
     public static final int VIEW_ALL = 5;
-    /** estimate time */
+    /** Estimate one patient's wait time. */
     public static final int ESTIMATE = 6;
+    /** Look up one patient's details. */
+    public static final int LOOKUP = 7;
+    /** Highest menu option. */
+    public static final int MAX_OPTION = LOOKUP;
+
+    /** Lowest allowed urgency. */
+    public static final int MIN_URGENCY = 1;
+    /** Highest allowed urgency. */
+    public static final int MAX_URGENCY = 10;
 
     /** Remove sub-menu: remove by patient ID. */
     public static final int REMOVE_BY_ID = 1;
@@ -129,6 +140,7 @@ public class OutputViewer {
         out.println(VIEW_ONE + ". View one organ's waitlist");
         out.println(VIEW_ALL + ". View all waitlists");
         out.println(ESTIMATE + ". Estimate wait time");
+        out.println(LOOKUP + ". Look up a patient");
         out.println(EXIT + ". Exit");
     }
 
@@ -138,50 +150,49 @@ public class OutputViewer {
      * Show the menu and read a choice. Text that is not an integer, or a
      * number outside the menu, is rejected and the menu is redrawn.
      *
-     * @return a valid menu option (EXIT through ESTIMATE)
+     * @return a valid menu option (EXIT through MAX_OPTION)
      */
     public int getMenuChoice() {
         while (true) {
             displayMenu();
             String line = readLine("Choose an option: ");
             Integer choice = parseInt(line);
-            if (choice != null && choice >= EXIT && choice <= ESTIMATE) {
+            if (choice != null && choice >= EXIT && choice <= MAX_OPTION) {
                 return choice;
             }
             out.println("\"" + line + "\" is not one of the options. "
-                + "Enter a number from " + EXIT + " to " + ESTIMATE + ".");
-    }
+                + "Enter a number from " + EXIT + " to " + MAX_OPTION + ".");
+        }
     }
 
 
     // ----------------------------------------------------------
     /**
-     * Ask for a new recipient's details and pass them to the manager. If the
-     * model rejects them, print why and ask again. Typing "cancel" returns to
-     * the menu.
+     * Ask for a new recipient's details one field at a time. Each field is
+     * checked right after it is typed, and only that field is asked again if
+     * it is wrong. Typing "cancel" at any prompt returns to the menu.
      */
     public void promptAddRecipient() {
         out.println("Add recipient (type \"" + CANCEL
             + "\" at any prompt to go back)");
         while (true) {
-            Integer id = readIntOrCancel("Patient ID: ");
+            Integer id = promptNewId();
             if (id == null) {
                 return;
             }
-            String name = readLineOrCancel("Name: ");
+            String name = promptName();
             if (name == null) {
                 return;
             }
-            String organ = readLineOrCancel(
-                "Organ needed " + organList() + ": ");
+            String organ = promptOrgan("Organ needed " + organList() + ": ");
             if (organ == null) {
                 return;
             }
-            String bloodType = readLineOrCancel("Blood type (e.g. O+): ");
+            String bloodType = promptBloodType("Blood type (e.g. O+): ");
             if (bloodType == null) {
                 return;
             }
-            Integer urgency = readIntOrCancel("Urgency (1-10): ");
+            Integer urgency = promptUrgency();
             if (urgency == null) {
                 return;
             }
@@ -192,9 +203,106 @@ public class OutputViewer {
                 return;
             }
             catch (IllegalArgumentException e) {
+                // backstop: the model rejected something the field checks
+                // let through
                 out.println("Could not add recipient: " + e.getMessage());
                 out.println("Please try again.");
             }
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for a patient ID that is not already in use.
+     *
+     * @return the ID, or null if the user cancelled
+     */
+    public Integer promptNewId() {
+        while (true) {
+            Integer id = readIntOrCancel("Patient ID: ");
+            if (id == null || !manager.isRegistered(id)) {
+                return id;
+            }
+            out.println("ID " + id + " is already taken. Enter a different "
+                + "ID.");
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for a name that is not blank.
+     *
+     * @return the name, or null if the user cancelled
+     */
+    public String promptName() {
+        while (true) {
+            String name = readLineOrCancel("Name: ");
+            if (name == null || !name.isEmpty()) {
+                return name;
+            }
+            out.println("Name can't be blank.");
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for an organ the system knows about.
+     *
+     * @param prompt
+     *            text to show
+     * @return the organ as typed, or null if the user cancelled
+     */
+    public String promptOrgan(String prompt) {
+        while (true) {
+            String organ = readLineOrCancel(prompt);
+            if (organ == null || manager.isKnownOrgan(organ)) {
+                return organ;
+            }
+            out.println("Unknown organ: " + organ + ". Choose one of "
+                + organList() + ".");
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for a valid blood type.
+     *
+     * @param prompt
+     *            text to show
+     * @return the blood type as typed, or null if the user cancelled
+     */
+    public String promptBloodType(String prompt) {
+        while (true) {
+            String bloodType = readLineOrCancel(prompt);
+            if (bloodType == null || manager.isValidBloodType(bloodType)) {
+                return bloodType;
+            }
+            out.println("Invalid blood type: " + bloodType
+                + ". Use A, B, AB or O followed by + or - (e.g. AB-).");
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Ask for an urgency between MIN_URGENCY and MAX_URGENCY.
+     *
+     * @return the urgency, or null if the user cancelled
+     */
+    public Integer promptUrgency() {
+        String prompt = "Urgency (" + MIN_URGENCY + "-" + MAX_URGENCY + "): ";
+        while (true) {
+            Integer urgency = readIntOrCancel(prompt);
+            if (urgency == null
+                || (urgency >= MIN_URGENCY && urgency <= MAX_URGENCY)) {
+                return urgency;
+            }
+            out.println("Urgency must be from " + MIN_URGENCY + " to "
+                + MAX_URGENCY + ".");
         }
     }
 
@@ -332,11 +440,31 @@ public class OutputViewer {
 
     // ----------------------------------------------------------
     /**
-     * Print every organ's waitlist.
+     * Print a one-line count for every organ, then the full list for each
+     * organ that has anyone waiting. Empty organs only appear in the count
+     * line.
      */
     public void displayWaitlists() {
+        int total = 0;
+        StringBuilder counts = new StringBuilder();
         for (String organ : ORGANS) {
-            displayWaitlist(organ);
+            int size = manager.getWaitlist(organ).length;
+            total += size;
+            if (counts.length() > 0) {
+                counts.append(" | ");
+            }
+            counts.append(organ).append(": ").append(size);
+        }
+        out.println("=== All waitlists (" + total + " waiting) ===");
+        out.println(counts);
+        if (total == 0) {
+            out.println("Nobody is waiting on any list.");
+            return;
+        }
+        for (String organ : ORGANS) {
+            if (manager.getWaitlist(organ).length > 0) {
+                displayWaitlist(organ);
+            }
         }
     }
 
@@ -404,6 +532,9 @@ public class OutputViewer {
                 break;
             case ESTIMATE:
                 promptEstimateWaitTime();
+                break;
+            case LOOKUP:
+                promptLookupPatient();
                 break;
             default:
                 break;
@@ -478,6 +609,11 @@ public class OutputViewer {
         private static final long serialVersionUID = 1L;
     }
     
+    // ----------------------------------------------------------
+    /**
+     * Ask for a patient ID and print that patient's estimated wait. Unknown
+     * IDs are rejected and asked again.
+     */
     public void promptEstimateWaitTime() {
         while (true) {
             Integer id = readIntOrCancel("Patient ID: ");
@@ -502,6 +638,48 @@ public class OutputViewer {
         }
     }
     
+    // ----------------------------------------------------------
+    /**
+     * Ask for a patient ID and print their details, their place in line,
+     * and their estimated wait. Unknown IDs are rejected and asked again.
+     */
+    public void promptLookupPatient() {
+        while (true) {
+            Integer id = readIntOrCancel("Patient ID: ");
+            if (id == null) {
+                return;
+            }
+            Recipient r = manager.getRecipient(id);
+            if (r == null) {
+                out.println("No waiting patient has ID " + id
+                    + ". Please try again.");
+                continue;
+            }
+            String organ = r.getOrganNeeded();
+            int lineLength = manager.getWaitlist(organ).length;
+            out.println(formatRecipient(r));
+            out.println("Position: " + manager.getPosition(id) + " of "
+                + lineLength + " on the " + organ + " waitlist");
+            Duration wait = manager.estimateWaitTime(id);
+            if (wait == null) {
+                out.println("Estimated wait: not enough history yet");
+            }
+            else {
+                out.println("Estimated wait: " + formatDuration(wait));
+            }
+            return;
+        }
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Format a duration as days, hours and minutes.
+     *
+     * @param d
+     *            duration to format
+     * @return text like "2 days, 3 hours, 4 minutes"
+     */
     public String formatDuration(Duration d) {
         return d.toDays() + " days, " + (d.toHours() % 24) + " hours, "
             + (d.toMinutes() % 60) + " minutes";

@@ -1,6 +1,7 @@
 package project3;
 
 import java.util.NoSuchElementException;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,12 +29,35 @@ public class WaitlistDeque
      * number of elements in the deque
      */
     protected int size;
+    /**
+     * Where the current time comes from (real clock unless a test passes a
+     * fake one).
+     */
+    private final Clock clock;
 
     /**
-     * Create a new DLinkedDeque object.
+     * Create a new DLinkedDeque object that uses the real system clock.
      */
     public WaitlistDeque()
     {
+        this(Clock.systemDefaultZone());
+    }
+
+
+    /**
+     * Create a new DLinkedDeque object that reads the time from the given
+     * clock. Tests pass a fake clock so they can "wait" days instantly.
+     *
+     * @param clock
+     *            source of the current time
+     */
+    public WaitlistDeque(Clock clock)
+    {
+        if (clock == null)
+        {
+            throw new IllegalArgumentException("clock is required");
+        }
+        this.clock = clock;
         head = null;
         tail = null;
         size = 0;
@@ -142,7 +166,7 @@ public class WaitlistDeque
     {
         if (head != null && head.getData().getFrontSince() == null)
         {
-            head.getData().setFrontSince(LocalDateTime.now());
+            head.getData().setFrontSince(LocalDateTime.now(clock));
         }
     }
     

@@ -20,12 +20,16 @@ import java.util.Arrays;
  * organs return null (empty); an unknown organ throws.</li>
  * <li>matchOrgan("kidney", ...) returns fixed recipient 1; other known organs
  * return null; an unknown organ throws.</li>
+ * <li>isRegistered, getRecipient and getPosition know only IDs 1 and 2
+ * (positions 1 and 2 on the kidney list).</li>
+ * <li>estimateWaitTime returns 20 days for ID 1, null ("not enough history")
+ * for ID 2, and throws for any other ID.</li>
  * </ul>
  * The last call is recorded in public fields so tests can check what the
  * view sent.
  *
  * @author Prateek Malekar
- * @version 2026.11.11
+ * @version 2026.11.18
  */
 public class StubWaitlistManager extends WaitlistManager {
     private static final String[] ORGANS = { "heart", "kidney", "liver",
@@ -141,9 +145,35 @@ public class StubWaitlistManager extends WaitlistManager {
     public Duration estimateWaitTime(int id) {
         record("estimateWaitTime", null);
         lastId = id;
-        if (id == 1 || id == 2) {
+        if (id == 1) {
             return Duration.ofDays(20);
         }
+        if (id == 2) {
+            return null;
+        }
         throw new IllegalArgumentException("No patient with id " + id);
+    }
+
+
+    @Override
+    public boolean isRegistered(int id) {
+        return id == 1 || id == 2;
+    }
+
+
+    @Override
+    public Recipient getRecipient(int id) {
+        record("getRecipient", null);
+        lastId = id;
+        if (id == 1 || id == 2) {
+            return kidneyList[id - 1];
+        }
+        return null;
+    }
+
+
+    @Override
+    public int getPosition(int id) {
+        return (id == 1 || id == 2) ? id : -1;
     }
 }

@@ -1,4 +1,5 @@
 package project3;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -21,19 +22,38 @@ public class WaitlistManager {
     private HashMap<Integer, WaitlistDeque.DLNode<Recipient>> lookup;
     private HashMap<String, Long> totalFrontSeconds;
     private HashMap<String, Integer> frontCount;
+    /** Where the current time comes from (fake in tests). */
+    private Clock clock;
 
     // ----------------------------------------------------------
     /**
      * Create a new WaitlistManager with an empty waitlist for every
-     * supported organ type.
+     * supported organ type, using the real system clock.
      */
     public WaitlistManager() {
+        this(Clock.systemDefaultZone());
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Create a new WaitlistManager that reads the time from the given clock.
+     * Tests pass a fake clock they can move forward, so wait times of days
+     * can be tested without actually waiting.
+     *
+     * @param clock
+     *              source of the current time
+     */
+    public WaitlistManager(Clock clock) {
+        if (clock == null) {
+            throw new IllegalArgumentException("clock is required");
+        }
+        this.clock = clock;
         waitlists = new HashMap<>();
         lookup = new HashMap<>();
         totalFrontSeconds = new HashMap<>();
         frontCount = new HashMap<>();
         for (String organ : ORGANS) {
-            waitlists.put(organ, new WaitlistDeque());
+            waitlists.put(organ, new WaitlistDeque(clock));
             totalFrontSeconds.put(organ, 0L);
             frontCount.put(organ, 0);
         }
@@ -78,7 +98,7 @@ public class WaitlistManager {
                 name,
                 organKey,
                 bloodType,
-                LocalDateTime.now(),
+                LocalDateTime.now(clock),
                 urgency,
                 "waiting");
         enqueRecipient(recipient);
@@ -263,17 +283,38 @@ public class WaitlistManager {
                 || donorGroup.equals(recipientGroup);
     }
     
+    // ----------------------------------------------------------
+    /**
+     * Add the time a recipient spent at the front of their waitlist to that
+     * organ's running total. Called when someone leaves the front by being
+     * dequeued or matched (not when removed by ID).
+     *
+     * @param r
+     *          recipient who just left the waitlist
+     */
     private void recordFrontWait(Recipient r) {
         if (r.getFrontSince() == null) {
             return;
         }
         long seconds = Duration.between(
-            r.getFrontSince(), LocalDateTime.now()).getSeconds();
+            r.getFrontSince(), LocalDateTime.now(clock)).getSeconds();
         String organ = r.getOrganNeeded();
         totalFrontSeconds.put(organ, totalFrontSeconds.get(organ) + seconds);
         frontCount.put(organ, frontCount.get(organ) + 1);
     }
-    
+
+    // ----------------------------------------------------------
+    /**
+     * Estimate how long a recipient will wait: the organ's average time spent
+     * at the front of the line, times the recipient's position.
+     *
+     * @param id
+     *           id of a recipient who is still waiting
+     * @return estimated wait, or null if nobody has left this organ's
+     *         waitlist yet (no history to average)
+     * @throws IllegalArgumentException
+     *           if no waiting recipient has that id
+     */
     public Duration estimateWaitTime(int id) {
         WaitlistDeque.DLNode<Recipient> node = lookup.get(id);
         if (node == null) {
@@ -288,6 +329,76 @@ public class WaitlistManager {
         int position = waitlists.get(organ).positionOf(node);
         return Duration.ofSeconds(averageSeconds * position);
     }
-    
-    
+
+    // ----------------------------------------------------------
+    /**
+     * Find a waiting recipient by id.
+     *
+     * @param id
+     *           recipient id
+     * @return the recipient, or null if nobody waiting has that id
+     */
+    public Recipient getRecipient(int id) {
+        WaitlistDeque.DLNode<Recipient> node = lookup.get(id);
+        return node == null ? null : node.getData();
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Find a waiting recipient's place in line (1 = front).
+     *
+     * @param id
+     *           recipient id
+     * @return position starting at 1, or -1 if nobody waiting has that id
+     */
+    public int getPosition(int id) {
+        WaitlistDeque.DLNode<Recipient> node = lookup.get(id);
+        if (node == null) {
+            return -1;
+        }
+        return waitlists.get(node.getData().getOrganNeeded()).positionOf(node);
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Check whether an id belongs to someone currently waiting.
+     *
+     * @param id
+     *           recipient id
+     * @return true if the id is already in use
+     */
+    public boolean isRegistered(int id) {
+        return lookup.containsKey(id);
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Check whether an organ name is one the system accepts (any case,
+     * surrounding spaces ignored).
+     *
+     * @param organ
+     *              organ name
+     * @return true if the organ has a waitlist
+     */
+    public boolean isKnownOrgan(String organ) {
+        return waitlists.containsKey(normalizeOrgan(organ));
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Check whether a blood type would be accepted by addRecipient.
+     *
+     * @param bloodType
+     *                  blood type such as "A+"
+     * @return true if valid
+     */
+    public boolean isValidBloodType(String bloodType) {
+        try {
+            aboGroup(bloodType);
+            return true;
+        }
+        catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
