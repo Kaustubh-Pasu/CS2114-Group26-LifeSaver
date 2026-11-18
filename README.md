@@ -40,6 +40,7 @@ Andrew: Prevented user entering blood type without indicating RH type, now shows
 
 Prateek: Per-field input checks in the add-recipient form, "Look up a patient" menu option, "View all" summary, FakeClock + Clock support in WaitlistManager/WaitlistDeque so wait time can be tested, WaitTimeTest (22 tests) and new OutputViewerTest tests for wait time, lookup, and input checks.
 
+Kaustubh: Fixed WaitlistManager to properly call dequeue in WaitlistDeque.
 
 **GenAI Notes**
 
@@ -49,6 +50,7 @@ Andrew: Used Gen AI to confirm the use of toUpperCase() on an entry with non-alp
 
 Prateek: Used Gen AI  to come up with the fake clock approach for testing wait times without waiting, and write the new tests.
 
+Kaustubh: Used Gen AI to ensure WaitlistMangager calls WaitlisteDeque properly.
 
 -End of work by November 18-
 
