@@ -8,9 +8,11 @@
 
 **Reflections** (need expansion)
 
-
+- still dont have priority queue
+- changes with waittime impacted most files but not dramatic restructuring, just adding new methods
 
 **Next Steps** (need expansion)
+
 -Priority Queue implementation 
 
 
